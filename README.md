@@ -2,7 +2,7 @@
 
 **Advanced Dispersion Process Optimization System**
 
-An AI-powered system that learns from dispersion process data to recommend optimal equipment settings, RPM, and processing parameters while minimizing energy costs and providing comprehensive FMEA-based risk analysis.
+An AI-powered system that learns from chemical dispersion process data to recommend optimal equipment settings, RPM, and processing parameters while minimizing energy costs and providing comprehensive FMEA-based risk analysis.
 
 ## ✨ Key Features
 
