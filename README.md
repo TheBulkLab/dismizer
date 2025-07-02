@@ -122,7 +122,7 @@ dismizer/
 ├── dismizer.py              # Main system class
 ├── requirements.txt         # Python dependencies
 ├── README.md               # Project documentation
-├── LICENSE                 # MIT License
+└── LICENSE                 # MIT License
 ```
 
 ## 📚 API Reference
