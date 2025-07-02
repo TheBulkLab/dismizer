@@ -208,7 +208,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 📧 Email: support@dismizer.com
 - 📖 Documentation: [Wiki](https://github.com/r0bin-kim/dismizer/wiki)
 - 🐛 Bug Reports: [Issues](https://github.com/r0bin-kim/dismizer/issues)
 - 💬 Discussions: [GitHub Discussions](https://github.com/r0bin-kim/dismizer/discussions)
