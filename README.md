@@ -123,17 +123,6 @@ dismizer/
 ├── requirements.txt         # Python dependencies
 ├── README.md               # Project documentation
 ├── LICENSE                 # MIT License
-├── examples/
-│   ├── basic_usage.py      # Basic usage examples
-│   ├── advanced_features.py # Advanced features demo
-│   └── data_analysis.py    # Data analysis examples
-├── tests/
-│   ├── test_dismizer.py    # Unit tests
-│   └── test_data.py        # Test data utilities
-└── docs/
-    ├── api_reference.md    # API documentation
-    ├── user_guide.md       # User guide
-    └── fmea_guide.md       # FMEA implementation guide
 ```
 
 ## 📚 API Reference
