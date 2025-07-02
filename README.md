@@ -122,6 +122,8 @@ dismizer/
 ├── dismizer.py              # Main system class
 ├── requirements.txt         # Python dependencies
 ├── README.md               # Project documentation
+├── CONTRIBUTING.md         # Project documentation
+├── CODE_OF_CONDUCT.md      # Project documentation
 └── LICENSE                 # MIT License
 ```
 
