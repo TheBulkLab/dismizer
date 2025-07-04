@@ -127,33 +127,6 @@ dismizer/
 └── LICENSE                 # MIT License
 ```
 
-## 📚 API Reference
-
-### Main Methods
-
-#### `add_data(initial_viscosity, weight, equipment, rpm, agitation_time, final_viscosity, temperature=25)`
-Adds new process data to the system with validation.
-
-#### `train_models()`
-Trains all machine learning models with cross-validation.
-
-#### `recommend_optimized_process(initial_viscosity, weight, temperature=25, target_equipment=None)`
-Returns optimized process parameters.
-
-#### `get_equipment_statistics()`
-Provides statistical analysis of equipment performance.
-
-#### `analyze_recommendation_with_fmea(recommendation)`
-Performs FMEA-based analysis of recommendations.
-
-## 🧪 Testing
-
-Run the test suite:
-
-```bash
-python -m pytest tests/ -v
-```
-
 ## 📊 Example Results
 
 ### Optimization Example
