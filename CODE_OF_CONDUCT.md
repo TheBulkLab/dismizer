@@ -1,6 +1,3 @@
-## CODE_OF_CONDUCT.md
-
-```markdown
 # Code of Conduct
 
 We value respectful and inclusive collaboration. All participants must adhere to these guidelines.
