@@ -1,171 +1,151 @@
-# Dismizer 🔬
+## Dispersion Process Optimizer (Dismizer)
 
-**Advanced Dispersion Process Optimization System**
+The **Dispersion Process Optimizer (Dismizer)** is a machine learning-powered system designed to learn from historical dispersion process data to recommend optimal equipment and operating parameters (like RPM). The primary goal is to minimize energy costs while achieving the desired product viscosity. It integrates a **Failure Mode and Effects Analysis (FMEA)** and a **Control Plan** to provide a risk assessment for its recommendations, ensuring a robust and efficient process.
 
-An AI-powered system that learns from chemical dispersion process data to recommend optimal equipment settings, RPM, and processing parameters while minimizing energy costs and providing comprehensive FMEA-based risk analysis.
+## ✨ Features
 
-## ✨ Key Features
+  * **Optimal Equipment Recommendation**: Automatically suggests the most suitable mixer based on initial material viscosity and batch weight.
+  * **Optimized Process Parameter Prediction**: Predicts the ideal RPM and agitation time required for the dispersion process.
+  * **Energy & Cost Analysis**: Estimates the final viscosity, energy cost, and an overall "efficiency score" for the recommended process.
+  * **Equipment-Specific Modeling**: Trains dedicated models for each piece of equipment, capturing its unique performance characteristics.
+  * **Integrated FMEA & Control Plan**: Analyzes each recommendation against a built-in FMEA to highlight how the AI mitigates high-risk failure modes. It also validates the recommendation against the process Control Plan.
+  * **Actionable Risk Analysis**: Identifies critical risks using Risk Priority Numbers (RPN) and explains how the AI-driven recommendations address them.
+  * **Data-Driven Improvement**: The system's models can be retrained as new data is added, allowing them to adapt and improve over time.
+  * **Persistent Models**: Saves trained machine learning models to disk, eliminating the need for retraining on every run.
 
-- **Equipment-Specific Modeling**: Individual machine learning models for each dispersion equipment
-- **Multi-Parameter Optimization**: Optimizes RPM, processing time, and equipment selection simultaneously
-- **Energy Cost Minimization**: Calculates and minimizes energy consumption
-- **FMEA Integration**: Built-in Failure Mode and Effects Analysis with Control Plan
-- **Model Validation**: Cross-validation and performance metrics for reliable predictions
-- **Data Quality Control**: Automated outlier detection and data validation
-- **Temperature Compensation**: Accounts for temperature effects on dispersion processes
+## ⚙️ How it Works
 
-## 🚀 Quick Start
+The `Dismizer` class encapsulates the entire workflow:
 
-### Installation
+1.  **Data Handling**: The system loads process data from a `dispersion_data.csv` file. The `add_data` method allows for easy addition of new batch records.
+2.  **Data Preprocessing**: The `preprocess_data` method cleans the dataset by performing feature engineering (e.g., calculating `Viscosity_Ratio`) and removing statistical outliers using the Interquartile Range (IQR) method to ensure model robustness.
+3.  **Model Training**:
+      * A **Random Forest Classifier** is trained to function as an `equipment_selector_model`, which recommends the best equipment for a given task.
+      * For each piece of equipment, a dedicated set of **Random Forest Regressors** is trained to predict `RPM`, `Agitation_Time`, and `Final_Viscosity`. This two-tiered approach allows the system to capture the specific nuances of each machine.
+4.  **Model Persistence**: All trained models, including the classifier, label encoder, and equipment-specific regressors, are saved to the `models/` directory using `joblib` for reusability.
+5.  **Recommendation**: The `recommend_optimized_process` method is the core of the prediction engine.
+      * It takes `initial_viscosity`, `weight`, and `temperature` as input.
+      * It first uses the equipment selector to identify the best mixer.
+      * It then predicts a baseline RPM and iterates through a range of nearby RPM values. For each value, it predicts the corresponding time and final viscosity.
+      * An `efficiency_score`, which balances the estimated energy cost against the process outcome, is calculated to determine the single best recommendation.
+6.  **FMEA and Control Plan Analysis**:
+      * The `generate_fmea_control_plan` method creates a standard FMEA and Control Plan for a typical dispersion process. The FMEA calculates a **Risk Priority Number (RPN)** for each potential failure mode using the formula: $RPN = \\text{Severity} \\times \\text{Occurrence} \\times \\text{Detection}$.
+      * The `analyze_recommendation_with_fmea` method takes the final recommendation and cross-references it with the FMEA and Control Plan. It reports the model's prediction confidence and explicitly states which high-RPN risks (e.g., 'Insufficient Agitation', 'Wrong Equipment Selection') are being mitigated by using the AI's optimized parameters.
+7.  **Reporting**: Results are presented in a series of clear, well-structured printouts, including equipment statistics, the final recommendation, and the FMEA-based risk analysis.
 
-```bash
-git clone https://github.com/r0bin-kim/dismizer.git
-cd dismizer
-pip install -r requirements.txt
-```
+### Usage
 
-### Basic Usage
-
-```python
-from dismizer import Dismizer
-
-# Initialize the system
-optimizer = Dismizer()
-
-# Add process data
-optimizer.add_data(
-    initial_viscosity=2800,  # cP
-    weight=750,              # kg
-    equipment='Mixer-B',
-    rpm=500,
-    agitation_time=90,       # minutes
-    final_viscosity=25000,   # cP
-    temperature=25           # °C
-)
-
-# Train the models
-optimizer.train_models()
-
-# Get optimization recommendation
-recommendation = optimizer.recommend_optimized_process(
-    initial_viscosity=2800,
-    weight=750,
-    temperature=25
-)
-
-print(f"Recommended Equipment: {recommendation['equipment']}")
-print(f"Recommended RPM: {recommendation['rpm']}")
-print(f"Estimated Time: {recommendation['estimated_time']} min")
-print(f"Expected Final Viscosity: {recommendation['estimated_viscosity']} cP")
-```
-
-## 📊 System Architecture
-
-### Machine Learning Models
-
-1. **Equipment Selector Model**: Recommends the most suitable equipment based on material properties
-2. **Equipment-Specific RPM Models**: Predicts optimal RPM for each equipment type
-3. **Time Prediction Models**: Estimates required processing time
-4. **Viscosity Prediction Models**: Forecasts final product viscosity
-
-### Data Flow
+Upon running the script, the system first checks for pre-trained models. If they are not found, it trains new ones using sample data.
 
 ```
-Raw Data → Preprocessing → Feature Engineering → Model Training → Optimization → Recommendation
-    ↓            ↓              ↓                 ↓              ↓            ↓
-Validation → Outlier Detection → Scaling → Cross-Validation → FMEA Analysis → Output
-```
+=== Dismizer v2.0 - Advanced Dispersion Process Optimizer ===
 
-## 🔧 Configuration
+Loading existing data from 'dispersion_data.csv'.
+Loaded 0 records.
+Adding enhanced sample data...
+New data added successfully. Total records: 1
+New data added successfully. Total records: 2
+...
+New data added successfully. Total records: 15
+Sample data added successfully.
 
-### Supported Equipment Types
-- Mixer-A: High-speed, low-viscosity applications
-- Mixer-B: Medium-speed, general purpose
-- Mixer-C: Low-speed, high-viscosity applications
+Starting model training...
+Detected 0 potential outliers.
+Training models for Mixer-A...
+Training models for Mixer-B...
+Training models for Mixer-C...
+All models saved successfully!
+Model training completed successfully!
 
-### Parameter Ranges
-- **Initial Viscosity**: 10 - 100,000 cP
-- **Weight**: 50 - 5,000 kg
-- **RPM**: 100 - 2,000
-- **Temperature**: 10 - 80°C
-- **Processing Time**: 5 - 300 minutes
+--- Model Performance Metrics ---
+equipment_selector_accuracy: 1.000
+Mixer-A_rpm_rmse: 53.67
+Mixer-A_time_rmse: 3.42
+Mixer-A_viscosity_rmse: 969.41
+Mixer-B_rpm_rmse: 29.35
+Mixer-B_time_rmse: 5.61
+Mixer-B_viscosity_rmse: 890.31
+Mixer-C_rpm_rmse: 30.69
+Mixer-C_time_rmse: 6.94
+Mixer-C_viscosity_rmse: 1475.29
+--------------------------------
 
-## 📈 Performance Metrics
+--- Equipment Statistics ---
+Mixer-A:
+  Batches: 5
+  Avg RPM: 840
+  Avg Time: 62.6 min
+  Avg Viscosity Change: 15400 cP
+Mixer-B:
+  Batches: 5
+  Avg RPM: 510
+  Avg Time: 88.0 min
+  Avg Viscosity Change: 21800 cP
+Mixer-C:
+  Batches: 5
+  Avg RPM: 302
+  Avg Time: 153.0 min
+  Avg Viscosity Change: 36400 cP
+---------------------------
 
-The system provides comprehensive performance metrics:
+=== Testing Optimization Scenarios ===
 
-- **RMSE** (Root Mean Square Error) for regression models
-- **Accuracy** for classification models
-- **Cross-validation scores** for model reliability
-- **Confidence intervals** for predictions
+--- Scenario 1 ---
+[Optimization Search] Initial Viscosity: 2800 cP, Weight: 750 kg, Temperature: 25°C
 
-## 🛡️ FMEA & Risk Management
-
-### Built-in Risk Analysis
-
-- **Failure Mode Identification**: Systematic identification of potential process failures
-- **Risk Priority Number (RPN)**: Quantitative risk assessment
-- **Control Plan**: Comprehensive quality control measures
-- **Mitigation Strategies**: AI-powered recommendations for risk reduction
-
-### Quality Control Features
-
-- Automated data validation
-- Outlier detection and handling
-- Model performance monitoring
-- Process parameter verification
-
-## 📁 Project Structure
-
-```
-dismizer/
-├── dismizer.py              # Main system class
-├── requirements.txt         # Python dependencies
-├── README.md               # Project documentation
-├── CONTRIBUTING.md         # Project documentation
-├── CODE_OF_CONDUCT.md      # Project documentation
-└── LICENSE                 # MIT License
-```
-
-## 📊 Example Results
-
-### Optimization Example
-```
-Input: Initial Viscosity=2800 cP, Weight=750 kg, Temperature=25°C
-Output:
+Input: Viscosity=2800 cP, Weight=750 kg, Temperature=25°C
+----------------------------------------------------------
 ✓ Recommended Equipment: Mixer-B
-✓ Recommended RPM: 520 RPM
-✓ Estimated Time: 85.2 min
-✓ Estimated Final Viscosity: 24,500 cP
-✓ Efficiency Score: 0.1245
-✓ Prediction Confidence: 94.2%
+✓ Recommended RPM: 494 RPM
+✓ Estimated Time: 93.35 min
+✓ Estimated Final Viscosity: 26059 cP
+✓ Estimated Energy Cost: 181.79
+✓ Efficiency Score: 204.918
+--- Enhanced FMEA & Control Plan Analysis ---
+
+[Recommended Process Parameters]
+  Equipment: Mixer-B
+  RPM: 494
+  Time: 93.35 min
+  Expected Final Viscosity: 26059 cP
+  Efficiency Score: 204.918
+
+[Equipment-Specific Model Confidence]
+  Model RMSE: 890.31 cP
+  Prediction Confidence: 96.6%
+
+[Control Plan Compliance Check]
+  ✓ Equipment Type: Mixer-B
+    Specification: AI Recommendation
+  ✓ Agitation RPM: 494 RPM
+    Specification: AI Recommendation ±5%
+  ✓ Agitation Time: 93.35 min
+    Specification: AI Recommendation ±5%
+
+[Risk Mitigation Analysis]
+  High-risk failure modes being addressed by this AI system:
+    - Insufficient Agitation (Low RPM/Short Time) (RPN: 270)
+      Mitigation: Use AI-Based RPM/Time Optimization
+    - Weighing Error (RPN: 96)
+      Mitigation: Implement Automated Weighing
+================================================================================
+...
+(Additional scenarios will be displayed)
+...
+=== System Ready for Production Use ===
+Available methods:
+- optimizer.add_data(initial_viscosity, weight, equipment, rpm, time, final_viscosity, temperature)
+- optimizer.train_models()
+- optimizer.recommend_optimized_process(initial_viscosity, weight, temperature)
+- optimizer.get_equipment_statistics()
 ```
 
-## 🔮 Future Enhancements
+The system provides a clear recommendation and backs it up with a risk and control analysis, making it a powerful tool for process engineers and operators.
 
-- [ ] Real-time process monitoring integration
-- [ ] Web-based dashboard
-- [ ] IoT sensor integration
-- [ ] Advanced neural network models
-- [ ] Multi-site data synchronization
-- [ ] Predictive maintenance features
+## 🤝 Contributing
+
+Contributions are welcome\! If you have suggestions for improvements, new features, or bug fixes, please open an issue or submit a pull request.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Industrial process optimization research community
-- FMEA methodology standards
-- Open source machine learning libraries (scikit-learn, pandas, numpy)
-
-## 📞 Support
-
-- 📖 Documentation: [Wiki](https://github.com/r0bin-kim/dismizer/wiki)
-- 🐛 Bug Reports: [Issues](https://github.com/r0bin-kim/dismizer/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/r0bin-kim/dismizer/discussions)
-
----
-
-**Made with ❤️ for the chemical process industry**
+This project is open-source and available under the [MIT License](https://www.google.com/search?q=LICENSE).
